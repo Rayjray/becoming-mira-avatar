@@ -17,7 +17,7 @@ var popupRight = 30;
 // ---------------------------------------------------------------------------
 
 var KLEIN = { w: 230, h: 260 };   // venster met het bolletje en de knoppen
-var GROOT = { w: 380, h: 520 };   // venster met Mira groot in beeld
+var GROOT = { w: 440, h: 620 };   // venster met Mira groot in beeld
 
 function zetMaat(m) {
   try { browser.browserAction.resizePopup(m.w, m.h); } catch (e) { /* oude runtime */ }
@@ -92,6 +92,7 @@ async function init() {
         document.body.classList.remove("verbinden");
         document.body.classList.add("bezig");
         knoppen.style.display = "flex";
+        zetGroot(true); // open direct groot zodra Mira in beeld is
       });
       client.addListener(AnamSDK.AnamEvent.CONNECTION_CLOSED, function (reden, details) {
         console.warn("[mira-avatar] gesloten", reden, details);
