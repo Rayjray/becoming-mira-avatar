@@ -1,0 +1,131 @@
+{
+  "manifest_version": 3,
+  "name": "Becoming Mira – Avatar",
+  "version": "0.1",
+  "description": "Mira Vale met een gezicht (Anam) en de ElevenLabs-agent, met de Webfuse-tools om op becomingmira.com te kijken en te navigeren.",
+  "host_permissions": [
+    "https://becomingmira.com/*",
+    "https://*.vercel.app/*",
+    "https://*.anam.ai/*",
+    "wss://*.anam.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "wizard_get_state",
+      "description": "Read the current screen of a data-agent-* instrumented form: which step is shown, its selectable options, its input fields, any alternative actions, which navigation controls are available, any error message, and a `prompt` telling you what to do next. Call this first and after anything unexpected.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "wizard_select_option",
+      "description": "Choose one of the options on the current screen by its `value` from wizard_get_state. By default it also presses Next afterwards so one call completes one question; pass advance:false to select without advancing (useful when the user is still deciding). Returns the resulting state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The option's `value` from wizard_get_state."
+          },
+          "advance": {
+            "type": "boolean",
+            "description": "Press Next after selecting. Default true."
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+    },
+    {
+      "name": "wizard_fill_fields",
+      "description": "Fill one or more input fields on the current screen. Pass an object keyed by the `field` names from wizard_get_state, e.g. {\"postal-code\":\"9722 GP\",\"house-number\":\"10\"}. Handles text inputs, selects, checkboxes and radios. Does NOT submit — follow up with wizard_navigate. Returns the resulting state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fields": {
+            "type": "object",
+            "description": "Map of data-agent-field key to the value to enter. Use true/false for checkboxes.",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "boolean",
+                "number"
+              ]
+            }
+          }
+        },
+        "required": [
+          "fields"
+        ]
+      }
+    },
+    {
+      "name": "wizard_navigate",
+      "description": "Press one of the form's navigation controls: next, back, submit or restart. Check wizard_get_state's `nav` to see which are available on this screen. Waits for the form to settle and returns the resulting state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "control": {
+            "type": "string",
+            "enum": [
+              "next",
+              "back",
+              "submit",
+              "restart"
+            ],
+            "description": "Which control to press."
+          }
+        },
+        "required": [
+          "control"
+        ]
+      }
+    },
+    {
+      "name": "wizard_action",
+      "description": "Invoke a secondary action offered by the current screen — for example skipping an optional step or retrying after a failure. Use the `value` from the `actions` list in wizard_get_state. Returns the resulting state.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "description": "The action's `value` from wizard_get_state."
+          }
+        },
+        "required": [
+          "value"
+        ]
+      }
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "env": [
+    {
+      "key": "AVATAR_START_URL",
+      "value": "",
+      "description": "Startadres op de site, bijv. https://becomingmira.com/api/avatar/webfuse-start"
+    },
+    {
+      "key": "AVATAR_SLEUTEL",
+      "value": "",
+      "description": "Zelfde waarde als AVATAR_WEBFUSE_KEY in Vercel"
+    }
+  ]
+}
