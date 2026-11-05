@@ -5,6 +5,7 @@
   "description": "Mira Vale met een gezicht (Anam) en de ElevenLabs-agent, met de Webfuse-tools om op becomingmira.com te kijken en te navigeren.",
   "host_permissions": [
     "https://becomingmira.com/*",
+    "https://*.becomingmira.com/*",
     "https://*.vercel.app/*",
     "https://*.anam.ai/*",
     "wss://*.anam.ai/*"
